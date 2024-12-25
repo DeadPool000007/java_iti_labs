@@ -1,8 +1,4 @@
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Optional;
+  import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -43,14 +39,23 @@ public class Main {
 
 
         List<Country> countrList= countr.entrySet().stream().map(e -> e.getValue()).collect(Collectors.toList());
+        Map<String, Country> countries = myworld.getCountries();
+        List<City> highestPopulatedCities = countries.entrySet().stream()
+                .map(entry -> entry.getValue().getCities().stream()
+                        .max(Comparator.comparingInt(City::getPopulation))
+                        .orElse(null))
+                .filter(Objects::nonNull)
+                .toList();
 
-        List<City> mostCountryCity = countrList.stream().map(c -> c.getCities().stream()
-                .reduce( new City(0,"","", 0), (x,y) -> x.getPopulation()>y.getPopulation()?x:y)
-        ).collect(Collectors.toList());
+        highestPopulatedCities.forEach(city ->
+                System.out.println(city.getCountryCode()+":"+city.getName() + ": " + city.getPopulation())
+        );
 
-        for(City c : mostCountryCity) {
-            System.out.println(c.getName());
-        }
+
+
+
+
+
         List<City> countryMaxCont = conts.stream()
                 .map(continent -> countrList.stream()
                         .filter(c -> continent.equals(c.getContinent()))
